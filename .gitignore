@@ -1,0 +1,7 @@
+!.wrangler/.dev.vars
+.dev.vars
+.DS_Store
+.vscode/
+.wrangler/.wrangler/
+.wrangler/bin/
+node_modules/
