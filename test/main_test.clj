@@ -1,6 +1,5 @@
 (ns main-test
-  (:require [main :as m]
-            [db :as db]))
+  (:require [main :as m]))
 
 (defn string->readable-stream [s]
   (let [encoder (js/TextEncoder.)]
@@ -18,7 +17,9 @@
 
 (->
  {:url "http://localhost/"
-  :body (string->readable-stream "{\"test\": \"data\"}")}
+  :method "GET"
+  ;; :body (string->readable-stream "{\"test\": \"data\"}")
+  }
  (m/handle-request {} {})
  (.-body)
  (readable-stream->string)
