@@ -1,8 +1,9 @@
 (ns main
   (:require [xml :as xml]
-            [views :as views]))
+            [views :as views]
+            [telegram :as tg]))
 
-(defn parse-form-data [text]
+(defn- parse-form-data [text]
   (let [params (js/URLSearchParams. text)]
     (Object/fromEntries (.entries params))))
 
@@ -13,16 +14,24 @@
         method request.method]
     (cond
       (and (= path "/") (= method "GET"))
-      (Response. (xml/to-string (views/home-page))
-                 {:headers {"Content-Type" "text/html"}})
+      (do
+        ;; (eprintln env)
+        (Response. (xml/to-string (views/home-page))
+                   {:headers {"Content-Type" "text/html"}}))
 
       (and (= path "/submit") (= method "POST"))
       (-> (.text request)
           (.then (fn [body]
                    (let [form-data (parse-form-data body)
                          link (:link_to_event form-data)]
-                     (Response. (xml/to-string (views/submit-result link))
-                                {:headers {"Content-Type" "text/html"}})))))
+                     (tg/with-config {:token env.TELEGRAM_BOT_TOKEN
+                                      :chat_id env.TELEGRAM_CHAT_ID}
+                       (fn []
+                         (-> (tg/send-message (str "Новая рекомендация: " link))
+                             (.then (fn [r]
+                                      ;; (eprintln "RESPONSE: " r)
+                                      (Response. (xml/to-string (views/submit-result link))
+                                                 {:headers {"Content-Type" "text/html"}}))))))))))
 
       :else
       (Response. "Not Found" {:status 404}))))
