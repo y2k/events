@@ -1,26 +1,27 @@
 (ns main-test
-  (:require [main :as m]))
+  (:require ["wrangler" :as wrangler]
+            ["node:test" :as t]
+            ["node:assert" :as assert]))
 
-(defn string->readable-stream [s]
-  (let [encoder (js/TextEncoder.)]
-    (js/ReadableStream.
-     {:start (fn [controller]
-               (.enqueue controller (.encode encoder s))
-               (.close controller))})))
+(def- worker-atom (atom nil))
 
-(defn readable-stream->string [stream]
-  (-> (.getReader stream)
-      (.read)
-      (.then (fn [result]
-               (let [decoder (js/TextDecoder.)]
-                 (.decode decoder (.-value result)))))))
+(t/describe
+ "Events Worker"
+ (fn []
+   (t/before (fn []
+               (-> (wrangler/unstable_startWorker {:config "wrangler.toml"})
+                   (.then (fn [w] (reset! worker-atom w))))))
 
-(->
- {:url "http://localhost/"
-  :method "GET"
-  ;; :body (string->readable-stream "{\"test\": \"data\"}")
-  }
- (m/handle-request {} {})
- (.-body)
- (readable-stream->string)
- (.then (fn [r] (println r))))
+   (t/after (fn []
+              (if (deref worker-atom)
+                (.dispose (deref worker-atom)))))
+
+   (t/test "GET / returns 200 with HTML form"
+           (fn []
+             (-> (.fetch (deref worker-atom) "http://localhost/")
+                 (.then (fn [resp]
+                          (assert/strictEqual resp.status 200)
+                          (.text resp)))
+                 (.then (fn [body]
+                          (assert/ok (.includes body "Рекомендовать событие"))
+                          (assert/ok (.includes body "<form")))))))))

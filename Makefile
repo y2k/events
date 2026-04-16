@@ -4,7 +4,7 @@ SRC_DIRS := src test
 
 .PHONY: test
 test: build
-	@ cd $(WRANGLER_DIR) && node bin/test/main_test.js
+	@ cd $(WRANGLER_DIR) && node --test bin/test/main_test.js
 
 .PHONY: build
 build:
