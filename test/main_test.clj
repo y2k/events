@@ -9,19 +9,20 @@
  "Events Worker"
  (fn []
    (t/before (fn []
-               (-> (wrangler/unstable_dev "bin/test/main_dev.js"
-                                          {:vars {:TELEGRAM_BOT_TOKEN "test-token"
-                                                  :TELEGRAM_CHAT_ID "test-chat-id"}
-                                           :experimental {:disableExperimentalWarning true}})
+               (-> (wrangler/unstable_startWorker
+                    {:entrypoint "bin/test/main_dev.js"
+                     :bindings {:TELEGRAM_BOT_TOKEN {:type "plain_text" :value "test-token"}
+                                :TELEGRAM_CHAT_ID {:type "plain_text" :value "test-chat-id"}}
+                     :dev {:logLevel "error"}})
                    (.then (fn [w] (reset! worker-atom w))))))
 
    (t/after (fn []
               (if (deref worker-atom)
-                (.stop (deref worker-atom)))))
+                (.dispose (deref worker-atom)))))
 
    (t/test "GET / returns 200 with HTML form"
            (fn []
-             (-> (.fetch (deref worker-atom))
+             (-> (.fetch (deref worker-atom) "http://localhost/")
                  (.then (fn [resp]
                           (assert/strictEqual resp.status 200)
                           (.text resp)))
