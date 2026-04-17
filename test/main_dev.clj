@@ -1,4 +1,4 @@
-(ns main
+(ns main-dev
   (:require [handler :as handler]))
 
 (export-default
