@@ -15,9 +15,11 @@
 
 (defn send-message [text]
   (let [config (get-config)
+        fetch-fn (:fetch config)
         url (str api-base config.token "/sendMessage")]
+    ;; (eprintln "CONFIG:" config)
     (->
-     (config.fetch
+     (fetch-fn
       url
       {:method "POST"
        :headers {"Content-Type" "application/json"}

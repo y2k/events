@@ -5,7 +5,7 @@
 (defn- handle-request [request env ctx]
   (tg/with-config {:token env.TELEGRAM_BOT_TOKEN
                    :chat_id env.TELEGRAM_CHAT_ID
-                   :fetch (or env.fetch js/fetch)}
+                   :fetch js/fetch}
     (fn []
       (handler/handle-request request env ctx))))
 
