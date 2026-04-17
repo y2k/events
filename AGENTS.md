@@ -21,7 +21,7 @@ Cloudflare Worker written in ly2k (Clojure dialect compiling to JS). Event recom
 
 ```bash
 make build    # Compile ly2k -> JS
-make test     # Build + run tests (node .wrangler/bin/test/main_test.js)
+make test     # Build + run tests (node --test .wrangler/bin/test/main_test.js)
 make run      # Build + wrangler dev on :8787
 make deploy   # Test + wrangler deploy
 ```
@@ -31,10 +31,8 @@ All commands must run from repo root. The `.wrangler/` dir is the wrangler proje
 ## Structure
 
 ```
-src/main.clj   # Worker entrypoint (export-default {:fetch ...})
-src/views.clj  # Hiccup-style HTML templates
-src/db.clj     # D1 database helpers (not yet wired)
-test/          # Tests run directly via node
+src/           # ly2k source
+test/          # Tests run via node --test
 .wrangler/     # Wrangler config, compiled output
 build.clj      # ly2k build config (deps, targets)
 ```
