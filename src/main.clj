@@ -1,8 +1,13 @@
 (ns main
-  (:require [handler :as handler]))
+  (:require [handler :as handler]
+            [telegram :as tg]))
 
 (defn- handle-request [request env ctx]
-  (handler/handle-request request (Object/assign {:fetch js/fetch} env) ctx))
+  (tg/with-config {:token env.TELEGRAM_BOT_TOKEN
+                   :chat_id env.TELEGRAM_CHAT_ID
+                   :fetch (or env.fetch js/fetch)}
+    (fn []
+      (handler/handle-request request env ctx))))
 
 (export-default
  {:fetch handle-request})

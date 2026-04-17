@@ -30,7 +30,7 @@
                           (assert/ok (.includes body "Рекомендовать событие"))
                           (assert/ok (.includes body "<form")))))))
 
-   (t/test "POST /submit returns 200"
+   (t/test "POST /submit returns 200 and sends telegram message"
            (fn []
              (-> (.fetch (deref worker-atom) "http://localhost/submit"
                          {:method "POST"
@@ -40,4 +40,10 @@
                           (assert/strictEqual resp.status 200)
                           (.text resp)))
                  (.then (fn [body]
-                          (assert/ok (.includes body "https://example.com/event")))))))))
+                          (assert/ok (.includes body "https://example.com/event"))))
+                 (.then (fn []
+                          (.fetch (deref worker-atom) "http://localhost/_test/fetch-calls")))
+                 (.then (fn [resp] (.text resp)))
+                 (.then (fn [body]
+                          (assert/ok (.includes body "api.telegram.org"))
+                          (assert/ok (.includes body "test-token")))))))))

@@ -21,14 +21,10 @@
           (.then (fn [body]
                    (let [form-data (parse-form-data body)
                          link (:link_to_event form-data)]
-                     (tg/with-config {:token env.TELEGRAM_BOT_TOKEN
-                                      :chat_id env.TELEGRAM_CHAT_ID
-                                      :fetch env.fetch}
-                       (fn []
-                         (-> (tg/send-message (str "Новая рекомендация: " link))
-                             (.then (fn [r]
-                                      (Response. (xml/to-string (views/submit-result link))
-                                                 {:headers {"Content-Type" "text/html"}}))))))))))
+                     (-> (tg/send-message (str "Новая рекомендация: " link))
+                         (.then (fn [r]
+                                  (Response. (xml/to-string (views/submit-result link))
+                                             {:headers {"Content-Type" "text/html"}}))))))))
 
       :else
       (Response. "Not Found" {:status 404}))))
