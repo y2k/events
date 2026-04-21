@@ -1,5 +1,5 @@
 (ns main-dev
-  (:require [handler :as handler]
+  (:require [main :as handler]
             [context-fetch :as fetch]
             [telegram :as tg]))
 
