@@ -45,5 +45,4 @@
                           (.fetch (deref worker-atom) "http://localhost/_test/fetch-calls")))
                  (.then (fn [resp] (.text resp)))
                  (.then (fn [body]
-                          (assert/ok (.includes body "api.telegram.org"))
-                          (assert/ok (.includes body "test-token")))))))))
+                          (assert/ok (.includes body "Новая рекомендация: https://example.com/event") body))))))))
