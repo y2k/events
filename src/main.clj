@@ -21,11 +21,14 @@
       (-> (.text request)
           (.then (fn [body]
                    (let [form-data (parse-form-data body)
-                         link (:link_to_event form-data)]
+                         link (:link_to_event form-data)
+                         response (Response. (xml/to-string (views/submit-result link))
+                                             {:headers {"Content-Type" "text/html"}})]
                      (-> (tg/send-message (str "Новая рекомендация: " link))
-                         (.then (fn []
-                                  (Response. (xml/to-string (views/submit-result link))
-                                             {:headers {"Content-Type" "text/html"}}))))))))
+                         (.then (fn [] response)
+                                (fn [err]
+                                  (eprintln err)
+                                  response)))))))
 
       :else
       (Response. "Not Found" {:status 404}))))
