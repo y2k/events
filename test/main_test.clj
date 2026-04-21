@@ -42,7 +42,7 @@
                  (.then (fn [body]
                           (assert/ok (.includes body "https://example.com/event"))))
                  (.then (fn []
-                          (.fetch (deref worker-atom) "http://localhost/_test/fetch-calls")))
+                          (.fetch (deref worker-atom) "http://localhost/_test/effect-calls")))
                  (.then (fn [resp] (.text resp)))
                  (.then (fn [body]
                           (assert/ok (.includes body "Новая рекомендация: https://example.com/event") body))))))))
