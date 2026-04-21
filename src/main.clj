@@ -1,6 +1,6 @@
 (ns main
   (:require [handler :as handler]
-            [fetch :as fetch]
+            [context-fetch :as fetch]
             [telegram :as tg]))
 
 (export-default

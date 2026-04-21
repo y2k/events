@@ -5,4 +5,5 @@
 (m/build-simple
  {:out ".wrangler/bin"
   :target "js"
-  :deps [["xml" "0.3.0"]]})
+  :deps [["xml" "0.3.0"]
+         ["context" "0.1.0/js"]]})

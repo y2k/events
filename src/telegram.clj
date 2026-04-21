@@ -1,6 +1,6 @@
 (ns telegram
   (:require ["node:async_hooks" :as async_hooks]
-            [fetch :as f]))
+            [context-fetch :as f]))
 
 (def- api-base "https://api.telegram.org/bot")
 
