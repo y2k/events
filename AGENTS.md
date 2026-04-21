@@ -9,6 +9,7 @@ Cloudflare Worker written in ly2k (Clojure dialect compiling to JS). Event recom
 - **Minimal work**: Do the least amount of work required. Write less code.
 - **One example**: When asked to write a test, write 1 test. When asked for an example, give 1 example.
 - **No over-engineering**: Simple solutions first. Add complexity only when explicitly needed.
+- **Run tests after changes**: After code changes, run `make test` from the repo root unless the user explicitly asks not to.
 
 ## Language & Toolchain
 
