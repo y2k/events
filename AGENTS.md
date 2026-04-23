@@ -44,4 +44,5 @@ build.clj      # ly2k build config (deps, targets)
 - Hiccup for HTML: `[:tag {:attr "val"} content]` via `xml/to-string`
 - `export-default` for Worker exports
 - Tests execute as scripts (no test framework)
+- `when` is not supported by the compiler; use `if` instead
 - use (def- ...) for private fields
