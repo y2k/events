@@ -24,7 +24,8 @@
                          link (:link_to_event form-data)
                          response (Response. (xml/to-string (views/submit-result link))
                                              {:headers {"Content-Type" "text/html"}})]
-                     (-> (tg/send-message (str "Новая рекомендация: " link))
+                     (-> (tg/send-message env.TELEGRAM_CHAT_ID
+                                          (str "Новая рекомендация: " link))
                          (.then (fn [] response)
                                 (fn [err]
                                   (eprintln err)
@@ -37,7 +38,6 @@
  {:fetch (fn [request env ctx]
            (fetch/with-fetch js/fetch
              (fn []
-               (tg/with-config {:token env.TELEGRAM_BOT_TOKEN
-                                :chat_id env.TELEGRAM_CHAT_ID}
+               (tg/with-config {:token env.TELEGRAM_BOT_TOKEN}
                  (fn []
                    (handle-request request env ctx))))))})

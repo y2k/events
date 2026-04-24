@@ -13,7 +13,7 @@
 (defn- get-config []
   (.getStore storage))
 
-(defn send-message [text]
+(defn send-message [chat_id text]
   (let [config (get-config)
         url (str api-base config.token "/sendMessage")]
     (->
@@ -21,7 +21,7 @@
               {:method "POST"
                :headers {"Content-Type" "application/json"}
                :body (.stringify js/JSON
-                                 {:chat_id config.chat_id
+                                 {:chat_id chat_id
                                   :text text})})
      (.then (fn [resp]
               (.json resp))))))
