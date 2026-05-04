@@ -5,5 +5,7 @@
 (m/build-simple
  {:out ".wrangler/bin"
   :target "js"
-  :deps [["xml" "0.3.0"]
-         ["context" "0.1.0/js"]]})
+  :deps [["effect_fetch" "0.1.0/js"]
+         ["effect" "0.1.0/js"]
+         ["test-cloudflare-worker" "0.2.0/js"]
+         ["xml" "0.3.0"]]})

@@ -1,27 +1,14 @@
 (ns telegram
-  (:require ["node:async_hooks" :as async_hooks]
-            [context-fetch :as f]))
+  (:require [effect-fetch :as f]))
 
 (def- api-base "https://api.telegram.org/bot")
 
-(def- storage (async_hooks/AsyncLocalStorage.))
-
-(defn with-config [config f]
-  (.run storage {:token config.token
-                 :chat_id config.chat_id} f))
-
-(defn- get-config []
-  (.getStore storage))
-
-(defn send-message [chat_id text]
-  (let [config (get-config)
-        url (str api-base config.token "/sendMessage")]
-    (->
-     (f/fetch url
-              {:method "POST"
-               :headers {"Content-Type" "application/json"}
-               :body (.stringify js/JSON
-                                 {:chat_id chat_id
-                                  :text text})})
-     (.then (fn [resp]
-              (.json resp))))))
+(defn send-message [config chat_id text]
+  (f/fetch
+   (str api-base (:token config) "/sendMessage")
+   {:method "POST"
+    :headers {"Content-Type" "application/json"}
+    :decoder :json
+    :body (.stringify js/JSON
+                      {:chat_id chat_id
+                       :text text})}))
