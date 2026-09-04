@@ -2,9 +2,12 @@ WRANGLER_DIR := .wrangler
 BIN_DIR := .wrangler/bin
 SRC_DIRS := src test
 
-.PHONY: test
+.PHONY: test prototype-published-event
 test: build
 	@ cd $(BIN_DIR) && node --test test/main_test.js
+
+prototype-published-event:
+	@ open src/published-event-prototype.html
 
 .PHONY: build
 build:

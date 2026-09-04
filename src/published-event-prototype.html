@@ -1,0 +1,130 @@
+<!doctype html>
+<!-- Three variants of a Published Event, switchable via ?variant=, in a Telegram-like preview. -->
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ПРОТОТИП — Published Event</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #dfe7ec; color: #17212b; }
+    header { padding: 14px 20px; background: #17212b; color: white; text-align: center; font-size: 13px; letter-spacing: .08em; }
+    main { display: grid; grid-template-columns: minmax(280px, 540px) minmax(260px, 380px); gap: 24px; max-width: 980px; margin: 0 auto; padding: 36px 20px 110px; align-items: start; }
+    .phone { padding: 22px; border-radius: 26px; background: #92a8b8; box-shadow: 0 18px 50px #5b697455; }
+    .channel { margin-bottom: 14px; color: white; font-weight: 700; text-shadow: 0 1px 2px #0005; }
+    .message { padding: 15px 16px 10px; border-radius: 9px 16px 16px 16px; background: white; box-shadow: 0 2px 7px #30404b44; font-size: 16px; line-height: 1.4; white-space: normal; }
+    .message h1, .message h2, .message p { margin: 0 0 12px; }
+    .message h1 { font-size: 21px; line-height: 1.22; }
+    .message h2 { font-size: 18px; line-height: 1.25; }
+    .message a { color: #168acd; text-decoration: none; }
+    .message .meta { display: grid; gap: 7px; margin: 14px 0; }
+    .message .stamp { display: inline-block; margin-bottom: 13px; padding: 5px 8px; border-radius: 6px; background: #e9f5fc; color: #1473a8; font-size: 13px; font-weight: 800; letter-spacing: .06em; }
+    .message .eyebrow { margin-bottom: 8px; color: #637381; font-size: 13px; font-weight: 700; text-transform: uppercase; }
+    .message .actions { display: flex; gap: 8px; margin: 15px -5px -3px; padding-top: 9px; border-top: 1px solid #e7ecef; }
+    .message .actions a { flex: 1; padding: 7px; text-align: center; font-weight: 700; }
+    .message .time { float: right; margin: 3px 0 0 10px; color: #8b9aa5; font-size: 12px; }
+    .evidence { padding: 20px; border-radius: 16px; background: #f7fafb; border: 1px solid #cbd7dd; }
+    .evidence h2 { margin: 0 0 8px; font-size: 17px; }
+    .evidence p { margin: 0 0 16px; color: #52636e; font-size: 14px; line-height: 1.45; }
+    .evidence dl { margin: 0; display: grid; grid-template-columns: 88px 1fr; gap: 10px; font-size: 13px; }
+    .evidence dt { color: #6d7d87; }
+    .evidence dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .switcher { position: fixed; z-index: 10; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 10px; border-radius: 999px; background: #17212b; color: white; box-shadow: 0 8px 30px #0007; }
+    .switcher button { width: 38px; height: 38px; border: 0; border-radius: 50%; background: #2aabee; color: white; cursor: pointer; font-size: 19px; }
+    .switcher strong { min-width: 210px; text-align: center; font-size: 14px; }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; padding-top: 18px; } .phone { padding: 14px; } .switcher strong { min-width: 160px; } }
+  </style>
+</head>
+<body>
+  <header>ПРОТОТИП · формат Published Event · ← → для переключения</header>
+  <main>
+    <section class="phone" aria-label="Предпросмотр Telegram">
+      <div class="channel">События Белграда</div>
+      <article class="message" id="message"></article>
+    </section>
+    <aside class="evidence">
+      <h2 id="evidence-title"></h2>
+      <p id="rationale"></p>
+      <dl>
+        <dt>title</dt><dd>Заголовок Source</dd>
+        <dt>date/time</dt><dd>2027-01-14 19:00</dd>
+        <dt>venue</dt><dd>Народный театр, Velika scena</dd>
+        <dt>price</dt><dd>от 2000 RSD</dd>
+        <dt>description</dt><dd>Балет Чайковского; Мари, Щелкунчик, Мышиный король</dd>
+        <dt>source</dt><dd>belgrad-consult.com/…/krcko-orasci…</dd>
+      </dl>
+    </aside>
+  </main>
+
+  <nav class="switcher" aria-label="Варианты прототипа">
+    <button id="previous" aria-label="Предыдущий вариант">←</button>
+    <strong id="variant-label"></strong>
+    <button id="next" aria-label="Следующий вариант">→</button>
+  </nav>
+
+  <script>
+    const sourceUrl = "https://belgrad-consult.com/afisha-belgrada/tpost/47nno4x611-krcko-orasci-schelkunchik-v-narodnom-tea";
+    const ticketUrl = "https://www.narodnopozoriste.rs/predstave/krcko-orascic";
+    const variants = {
+      A: {
+        name: "Короткий анонс",
+        rationale: "Сначала название и одна редакционная фраза, затем все практические факты. Ближе всего к обычному посту канала.",
+        html: `<h1>Krcko Oraščić / «Щелкунчик» в Белграде</h1>
+          <p>Балет Чайковского на Большой сцене Народного театра — рождественская история о Мари, Щелкунчике и Мышином короле.</p>
+          <div class="meta"><div>📅 14 января, 19:00</div><div>📍 Народный театр, Большая сцена</div><div>🎟 От 2000 RSD — <a href="${ticketUrl}">билеты</a></div></div>
+          <p><a href="${sourceUrl}">Источник</a><span class="time">10:00 ✓✓</span></p>`
+      },
+      B: {
+        name: "Дата как крючок",
+        rationale: "Дата получает главный визуальный приоритет; подходит, если канал читают как календарь ближайших событий.",
+        html: `<div class="stamp">14 ЯНВАРЯ · 19:00</div>
+          <h1>Krcko Oraščić / «Щелкунчик»</h1>
+          <h2>Народный театр · Белград</h2>
+          <p>Рождественский балет Чайковского с Мари, Щелкунчиком, Мышиным королём и знакомой музыкой.</p>
+          <p><strong>Цена:</strong> от 2000 RSD</p>
+          <div class="actions"><a href="${ticketUrl}">Купить билет</a><a href="${sourceUrl}">Источник</a></div>
+          <span class="time">10:00 ✓✓</span>`
+      },
+      C: {
+        name: "Факты прежде текста",
+        rationale: "Сначала сканируемые факты, затем короткое объяснение. Самый предсказуемый вариант для автоматической генерации.",
+        html: `<div class="eyebrow">Театр · балет · для детей</div>
+          <h1>Krcko Oraščić / «Щелкунчик»</h1>
+          <div class="meta"><div>🗓 Четверг, 14 января · 19:00</div><div>📍 Народный театр, Большая сцена · Белград</div><div>💳 От 2000 RSD</div></div>
+          <p><strong>Что это:</strong> рождественский балет Чайковского о Мари, Щелкунчике и Мышином короле.</p>
+          <p><a href="${ticketUrl}">Билеты</a> · <a href="${sourceUrl}">Источник</a><span class="time">10:00 ✓✓</span></p>`
+      }
+    };
+    const keys = Object.keys(variants);
+    const params = new URLSearchParams(location.search);
+    let current = variants[params.get("variant")] ? params.get("variant") : "A";
+
+    function render() {
+      const variant = variants[current];
+      document.querySelector("#message").innerHTML = variant.html;
+      document.querySelector("#variant-label").textContent = `${current} · ${variant.name}`;
+      document.querySelector("#evidence-title").textContent = `Вариант ${current}: ${variant.name}`;
+      document.querySelector("#rationale").textContent = variant.rationale;
+      const url = new URL(location.href);
+      url.searchParams.set("variant", current);
+      history.replaceState({}, "", url);
+    }
+
+    function move(delta) {
+      const index = keys.indexOf(current);
+      current = keys[(index + delta + keys.length) % keys.length];
+      render();
+    }
+
+    document.querySelector("#previous").addEventListener("click", () => move(-1));
+    document.querySelector("#next").addEventListener("click", () => move(1));
+    addEventListener("keydown", event => {
+      if (["INPUT", "TEXTAREA"].includes(event.target.tagName) || event.target.isContentEditable) return;
+      if (event.key === "ArrowLeft") move(-1);
+      if (event.key === "ArrowRight") move(1);
+    });
+    render();
+  </script>
+</body>
+</html>
