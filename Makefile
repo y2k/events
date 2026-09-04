@@ -2,9 +2,12 @@ WRANGLER_DIR := .wrangler
 BIN_DIR := .wrangler/bin
 SRC_DIRS := src test
 
-.PHONY: test
+.PHONY: test prototype-operator-telegram
 test: build
 	@ cd $(BIN_DIR) && node --test test/main_test.js
+
+prototype-operator-telegram:
+	@ open src/operator-telegram-prototype.html
 
 .PHONY: build
 build:

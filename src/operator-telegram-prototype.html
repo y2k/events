@@ -1,0 +1,195 @@
+<!doctype html>
+<!-- Three variants of the Operator Telegram interface, switchable via ?variant=. -->
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ПРОТОТИП — Operator Telegram</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #dfe7ec; color: #17212b; }
+    header { padding: 14px 20px; background: #17212b; color: white; text-align: center; font-size: 13px; letter-spacing: .08em; }
+    main { display: grid; grid-template-columns: minmax(320px, 570px) minmax(260px, 350px); gap: 24px; max-width: 1000px; margin: 0 auto; padding: 32px 20px 110px; align-items: start; }
+    .phone { min-height: 620px; padding: 18px; border-radius: 26px; background: #91a8b8; box-shadow: 0 18px 50px #5b697455; }
+    .chat-title { margin-bottom: 14px; color: white; font-weight: 750; text-shadow: 0 1px 2px #0005; }
+    .chat { display: grid; gap: 10px; }
+    .message { max-width: 94%; padding: 12px 13px 8px; border-radius: 8px 15px 15px 15px; background: white; box-shadow: 0 2px 6px #30404b3d; font-size: 15px; line-height: 1.4; }
+    .message.operator { justify-self: end; border-radius: 15px 8px 15px 15px; background: #dcf8c6; }
+    .message h2, .message h3, .message p { margin: 0 0 9px; }
+    .message h2 { font-size: 18px; }
+    .message h3 { font-size: 15px; }
+    .muted { color: #6e7f89; font-size: 13px; }
+    .stamp { float: right; margin: 5px 0 0 10px; color: #8797a1; font-size: 11px; }
+    .buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin: 11px -5px -3px; padding-top: 8px; border-top: 1px solid #e3e9ec; }
+    .buttons.one { grid-template-columns: 1fr; }
+    button.action, .command { min-height: 36px; padding: 7px 8px; border: 0; border-radius: 7px; background: #e8f5fc; color: #137aae; cursor: pointer; font: inherit; font-weight: 700; }
+    button.danger { background: #fff0ef; color: #c93a32; }
+    .commands { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .command { min-height: auto; padding: 6px 9px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    .prompt { display: flex; gap: 7px; margin-top: 12px; }
+    .prompt input { min-width: 0; flex: 1; padding: 9px 10px; border: 1px solid #b9c9d1; border-radius: 8px; font: inherit; }
+    .alert { border-left: 5px solid #e9a23b; }
+    .critical { border-left-color: #d94a42; }
+    aside { padding: 18px; border: 1px solid #c9d5dc; border-radius: 16px; background: #f7fafb; }
+    aside h2 { margin: 0 0 7px; font-size: 18px; }
+    aside p { margin: 0 0 14px; color: #586a75; font-size: 14px; line-height: 1.4; }
+    pre { min-height: 290px; margin: 0; padding: 13px; overflow: auto; border-radius: 9px; background: #17212b; color: #d7e8ef; font-size: 12px; line-height: 1.5; white-space: pre-wrap; }
+    .switcher { position: fixed; z-index: 10; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 8px 10px; border-radius: 999px; background: #17212b; color: white; box-shadow: 0 8px 30px #0007; }
+    .switcher button { width: 38px; height: 38px; border: 0; border-radius: 50%; background: #2aabee; color: white; cursor: pointer; font-size: 19px; }
+    .switcher strong { min-width: 220px; text-align: center; font-size: 14px; }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; padding-top: 18px; } .phone { min-height: 540px; padding: 13px; } .switcher strong { min-width: 170px; } }
+  </style>
+</head>
+<body>
+  <header>ПРОТОТИП · служебный Telegram Operator · состояние хранится только в памяти</header>
+  <main>
+    <section class="phone" aria-label="Служебный Telegram-чат">
+      <div class="chat-title">Autonomous Event Editor · служебный чат</div>
+      <div class="chat" id="chat"></div>
+    </section>
+    <aside>
+      <h2 id="variant-title"></h2>
+      <p id="rationale"></p>
+      <pre id="state"></pre>
+    </aside>
+  </main>
+  <nav class="switcher" aria-label="Варианты прототипа">
+    <button id="previous" aria-label="Предыдущий вариант">←</button>
+    <strong id="variant-label"></strong>
+    <button id="next" aria-label="Следующий вариант">→</button>
+  </nav>
+
+  <script>
+    const initialState = {
+      publishing: true,
+      sources: { "Afisha Mira": true, "Афиша Белграда": true },
+      queued: 2,
+      warning: "Афиша Белграда: 3 ошибки чтения подряд",
+      publishedEvent: "Krcko Oraščić / «Щелкунчик»",
+      publishedEventDeleted: false,
+      audit: ["09:02 scan завершён", "09:04 2 кандидата запланированы"]
+    };
+    let state = structuredClone(initialState);
+
+    const variants = {
+      A: {
+        name: "Единая панель",
+        rationale: "Одна обновляемая карточка показывает всё состояние и основные кнопки. Мало сообщений, но действия спрятаны за общей панелью.",
+        view: () => `<article class="message">
+          <h2>${state.publishing ? "🟢 Редактор работает" : "⏸ Публикация остановлена"}</h2>
+          <p><strong>Очередь:</strong> ${state.queued} публикации<br><strong>Последний поиск:</strong> сегодня, 09:02</p>
+          <p><strong>Sources</strong><br>${sourceLine("Afisha Mira")}<br>${sourceLine("Афиша Белграда")}</p>
+          <p class="muted">⚠️ ${state.warning}</p>
+          <div class="buttons">
+            <button class="action ${state.publishing ? "danger" : ""}" data-action="toggle">${state.publishing ? "Остановить" : "Возобновить"}</button>
+            <button class="action" data-action="source">Sources</button>
+            <button class="action" data-action="log">Журнал</button>
+            <button class="action danger" data-action="delete">Удалить пост</button>
+          </div><span class="stamp">09:05</span>
+        </article>`
+      },
+      B: {
+        name: "Командный чат",
+        rationale: "Каждое намерение — явная slash-команда с ответом бота. Самый прозрачный аудит, но Operator должен помнить команды.",
+        view: () => `<article class="message"><p>Управление через команды. Нажмите пример или введите команду.</p>
+          <div class="commands">
+            <button class="command" data-command="/status">/status</button>
+            <button class="command" data-command="/${state.publishing ? "pause" : "resume"}">/${state.publishing ? "pause" : "resume"}</button>
+            <button class="command" data-command="/sources">/sources</button>
+            <button class="command" data-command="/log">/log</button>
+            <button class="command" data-command="/delete">/delete</button>
+          </div>
+          <form class="prompt" id="command-form"><input id="command-input" value="/status" aria-label="Команда"><button class="action">Отправить</button></form>
+        </article>${commandHistory()}`
+      },
+      C: {
+        name: "Действия из alerts",
+        rationale: "В спокойном режиме чат молчит; кнопки появляются в предупреждении или сообщении о публикации. Минимум шума, но нет единого обзора.",
+        view: () => `<article class="message alert critical">
+          <h3>⚠️ Source требует внимания</h3>
+          <p>${state.warning}</p>
+          <div class="buttons"><button class="action" data-action="source">${state.sources["Афиша Белграда"] ? "Отключить Source" : "Включить Source"}</button><button class="action" data-action="log">Подробности</button></div>
+          <span class="stamp">09:03</span>
+        </article>
+        <article class="message">
+          <h3>${state.publishedEventDeleted ? "🗑 Published Event удалён" : "✅ Published Event отправлен"}</h3>
+          <p>${state.publishedEvent}</p>
+          <div class="buttons one"><button class="action danger" data-action="delete" ${state.publishedEventDeleted ? "disabled" : ""}>Удалить публикацию</button></div>
+          <span class="stamp">10:00</span>
+        </article>
+        <article class="message"><p>${state.publishing ? "Редактор работает. Новых предупреждений нет." : "Публикация остановлена Operator."}</p>
+          <div class="buttons one"><button class="action ${state.publishing ? "danger" : ""}" data-action="toggle">${state.publishing ? "Аварийная остановка" : "Возобновить"}</button></div>
+        </article>`
+      }
+    };
+
+    const keys = Object.keys(variants);
+    const params = new URLSearchParams(location.search);
+    let current = variants[params.get("variant")] ? params.get("variant") : "A";
+
+    function sourceLine(name) { return `${state.sources[name] ? "✅" : "⛔"} ${name}`; }
+    function commandHistory() {
+      const last = state.audit.at(-1) || "нет действий";
+      return `<article class="message operator"><p>${escapeHtml(last.startsWith("/") ? last.split(" → ")[0] : "/status")}</p><span class="stamp">09:05</span></article>
+        <article class="message"><p>${state.publishing ? "🟢 Публикация включена" : "⏸ Публикация остановлена"}<br>Очередь: ${state.queued}<br>${sourceLine("Afisha Mira")}<br>${sourceLine("Афиша Белграда")}</p><p class="muted">Последнее действие: ${escapeHtml(last)}</p><span class="stamp">09:05</span></article>`;
+    }
+    function escapeHtml(text) { const node = document.createElement("div"); node.textContent = text; return node.innerHTML; }
+
+    function act(action) {
+      if (action === "toggle") {
+        state.publishing = !state.publishing;
+        state.audit.push(state.publishing ? "09:06 публикация возобновлена" : "09:06 публикация остановлена");
+      } else if (action === "source") {
+        state.sources["Афиша Белграда"] = !state.sources["Афиша Белграда"];
+        state.audit.push(`09:06 Афиша Белграда ${state.sources["Афиша Белграда"] ? "включена" : "отключена"}`);
+      } else if (action === "log") {
+        state.audit.push("09:06 журнал просмотрен");
+      } else if (action === "delete") {
+        state.publishedEventDeleted = true;
+        state.audit.push("09:06 Published Event удалён");
+      }
+      render();
+    }
+
+    function runCommand(command) {
+      const normalized = command.trim();
+      if (normalized === "/pause") state.publishing = false;
+      if (normalized === "/resume") state.publishing = true;
+      if (normalized === "/delete") state.publishedEventDeleted = true;
+      state.audit.push(`${normalized || "(пусто)"} → выполнено`);
+      render();
+    }
+
+    function render() {
+      const variant = variants[current];
+      document.querySelector("#chat").innerHTML = variant.view();
+      document.querySelector("#variant-title").textContent = `Вариант ${current}: ${variant.name}`;
+      document.querySelector("#variant-label").textContent = `${current} · ${variant.name}`;
+      document.querySelector("#rationale").textContent = variant.rationale;
+      document.querySelector("#state").textContent = JSON.stringify(state, null, 2);
+      document.querySelectorAll("[data-action]").forEach(button => button.addEventListener("click", () => act(button.dataset.action)));
+      document.querySelectorAll("[data-command]").forEach(button => button.addEventListener("click", () => runCommand(button.dataset.command)));
+      const form = document.querySelector("#command-form");
+      if (form) form.addEventListener("submit", event => { event.preventDefault(); runCommand(document.querySelector("#command-input").value); });
+      const url = new URL(location.href);
+      url.searchParams.set("variant", current);
+      history.replaceState({}, "", url);
+    }
+
+    function move(delta) {
+      const index = keys.indexOf(current);
+      current = keys[(index + delta + keys.length) % keys.length];
+      render();
+    }
+    document.querySelector("#previous").addEventListener("click", () => move(-1));
+    document.querySelector("#next").addEventListener("click", () => move(1));
+    addEventListener("keydown", event => {
+      if (["INPUT", "TEXTAREA"].includes(event.target.tagName) || event.target.isContentEditable) return;
+      if (event.key === "ArrowLeft") move(-1);
+      if (event.key === "ArrowRight") move(1);
+    });
+    render();
+  </script>
+</body>
+</html>
