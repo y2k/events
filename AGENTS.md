@@ -18,6 +18,11 @@ Cloudflare Worker written in ly2k (Clojure dialect compiling to JS). Event recom
 - Build generates JS to `.wrangler/bin/` (gitignored)
 - Deploys to Cloudflare Workers via wrangler
 
+## Compiler ly2k
+
+The `l2yk` compiler source code is located in `~/Projects/language`.
+Create issues for the `l2yk` compiler in https://github.com/y2k/language.
+
 ## Commands
 
 ```bash
@@ -46,3 +51,17 @@ build.clj      # ly2k build config (deps, targets)
 - Tests execute as scripts (no test framework)
 - `when` is not supported by the compiler; use `if` instead
 - use (def- ...) for private fields
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues for `y2k/events`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Triage uses the five canonical label names. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Domain documentation uses a single-context layout. See `docs/agents/domain.md`.

@@ -6,3 +6,5 @@
 .wrangler/bin/
 node_modules/
 opencode.json
+/.agents/
+

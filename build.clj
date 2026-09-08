@@ -1,9 +1,11 @@
 (ns build (:require [make :as m]))
 
-(deps {:make "0.5.0"})
+(deps {:make "0.6.0"})
 
-(m/build-simple
- {:out ".wrangler/bin"
-  :target "js"
-  :deps [["xml" "0.3.0"]
-         ["context" "0.1.0/js"]]})
+(m/makefile
+ {:target "js"
+  :dirs [{:path "src" :build-dir ".wrangler/bin/src"}
+         {:path "src" :build-dir ".wrangler/bin/test"}
+         {:path "test" :build-dir ".wrangler/bin/test"}]
+  :libs {:effect "0.1.0/js"
+         :xml "0.4.0"}})

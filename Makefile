@@ -4,13 +4,15 @@ SRC_DIRS := src test
 
 .PHONY: test
 test: build
-	@ cd $(WRANGLER_DIR) && node --test bin/test/main_test.js
+	@ cd $(BIN_DIR) && node --test test/main_test.js
 
 .PHONY: build
 build:
 	@ mkdir -p $(BIN_DIR)
-	@ ly2k compile -target eval -src build.clj > $(BIN_DIR)/Makefile
+	@ ly2k --target eval < build.clj > $(BIN_DIR)/Makefile
 	@ $(MAKE) -f $(BIN_DIR)/Makefile > /dev/null
+	@ cp $(LY2K_PACKAGES_DIR)/prelude/1.0.0/js/language_runtime.js $(BIN_DIR)/src/
+	@ cp $(LY2K_PACKAGES_DIR)/prelude/1.0.0/js/language_runtime.js $(BIN_DIR)/test/
 
 .PHONY: clean
 clean:
