@@ -18,22 +18,6 @@ Cloudflare Worker written in ly2k (Clojure dialect compiling to JS). Event recom
 - Build generates JS to `.wrangler/bin/` (gitignored)
 - Deploys to Cloudflare Workers via wrangler
 
-## Compiler ly2k
-
-The `l2yk` compiler source code is located in `~/Projects/language`.
-Create issues for the `l2yk` compiler in https://github.com/y2k/language.
-
-## Commands
-
-```bash
-make build    # Compile ly2k -> JS
-make test     # Build + run tests (node --test .wrangler/bin/test/main_test.js)
-make run      # Build + wrangler dev on :8787
-make deploy   # Test + wrangler deploy
-```
-
-All commands must run from repo root. The `.wrangler/` dir is the wrangler project root.
-
 ## Structure
 
 ```
@@ -42,26 +26,3 @@ test/          # Tests run via node --test
 .wrangler/     # Wrangler config, compiled output
 build.clj      # ly2k build config (deps, targets)
 ```
-
-## ly2k Quirks
-
-- JS interop: `request.url`, `js/URL.`, `Object/fromEntries`
-- Hiccup for HTML: `[:tag {:attr "val"} content]` via `xml/to-string`
-- `export-default` for Worker exports
-- Tests execute as scripts (no test framework)
-- `when` is not supported by the compiler; use `if` instead
-- use (def- ...) for private fields
-
-## Agent skills
-
-### Issue tracker
-
-Issues are tracked in GitHub Issues for `y2k/events`. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Triage uses the five canonical label names. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Domain documentation uses a single-context layout. See `docs/agents/domain.md`.
