@@ -26,3 +26,17 @@ test/          # Tests run via node --test
 .wrangler/     # Wrangler config, compiled output
 build.clj      # ly2k build config (deps, targets)
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in `.scratch/<feature>/`. Read `docs/agents/issue-tracker.md` before issue operations.
+
+### Triage labels
+
+Use the five default triage roles. Read `docs/agents/triage-labels.md` when triaging.
+
+### Domain docs
+
+Single-context layout. Read `docs/agents/domain.md` before exploring the codebase.
