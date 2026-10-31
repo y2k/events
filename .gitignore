@@ -4,7 +4,8 @@
 .vscode/
 .wrangler/.wrangler/
 .wrangler/bin/
+/.scratch/
 node_modules/
 opencode.json
 /.agents/
-
+/.opencode/skills/y2k-language

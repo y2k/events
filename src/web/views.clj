@@ -1,4 +1,4 @@
-(ns views)
+(ns web.views)
 
 (defn- layout [title content]
   [:html {}

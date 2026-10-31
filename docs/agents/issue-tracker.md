@@ -1,22 +1,29 @@
-# Issue tracker: GitHub
+# Issue tracker: Local Markdown
 
-Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and specs live in `.scratch/`.
 
 ## Conventions
 
-- Create, read, edit, comment on, label, assign, and close issues with `gh issue`.
-- Infer `y2k/events` from the repository remote.
-- Pull requests are not a triage request surface.
+- One directory per feature: `.scratch/<feature-slug>/`.
+- Spec: `spec.md` within that directory.
+- Tickets: `issues/<NN>-<slug>.md`, numbered from `01`, one file per ticket.
+- Triage state: a `Status:` line near the top, using roles from
+  `docs/agents/triage-labels.md`.
+- Conversation: append under `## Comments`.
 
-## Publishing
-
-When a skill says to publish to the issue tracker, create a GitHub issue. When it asks for a ticket, load the issue and its comments.
+When asked to publish, create the appropriate spec or ticket file.
+When asked to fetch a ticket, read its referenced file.
+Resolve bare ticket numbers within the relevant feature directory.
 
 ## Wayfinding operations
 
-- A map is an issue labelled `wayfinder:map`.
-- Tickets are GitHub sub-issues of the map, with a `wayfinder:research`, `wayfinder:prototype`, `wayfinder:grilling`, or `wayfinder:task` label.
-- Use native GitHub issue dependencies for blocking. If unavailable, use a `Blocked by: #<number>` line.
-- The frontier contains open, unblocked, unassigned child issues.
-- Claim a ticket by assigning it to the current GitHub user before doing any work.
-- Resolve a ticket by posting the answer as a comment, closing it, and adding a linked gist to the map's Decisions-so-far section.
+For `/wayfinder`:
+
+- Map: `.scratch/<effort>/map.md`, containing Notes, Decisions-so-far, and Fog.
+- Child: `issues/<NN>-<slug>.md`, with the question in the body and a
+  `Type:` line: research, prototype, grilling, or task.
+- Blocking: `Blocked by: NN, NN`. Unblocked when all listed tickets are resolved.
+- Frontier: first ticket by number that is open, unblocked, and unclaimed.
+- Claim: save `Status: claimed` before starting work.
+- Resolve: append `## Answer`, set `Status: resolved`, and add a summary
+  and link to the map's Decisions-so-far.

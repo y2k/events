@@ -1,17 +1,22 @@
-# Domain Docs
-
-This repository uses a single domain context.
+# Domain docs
 
 ## Before exploring
 
-- Read the root `CONTEXT.md`.
-- Read relevant ADRs under `docs/adr/` when that directory exists.
-- If either is absent, proceed silently.
+This repo uses a single-context layout:
+
+- Read root `GLOSSARY.md` for domain terminology.
+- Read relevant decisions in `docs/adr/`.
+
+If these files are absent, proceed silently. The domain-modeling skill
+creates them when terms or decisions are resolved.
 
 ## Vocabulary
 
-Use the canonical terms defined in `CONTEXT.md` and avoid the synonyms it rules out. Record newly resolved domain language through the domain-modeling workflow.
+Use glossary terms when naming domain concepts in issues, proposals,
+hypotheses, and tests. Reconsider unfamiliar terms or note genuine gaps
+for domain-modeling.
 
 ## Decisions
 
-Surface any conflict with an existing ADR instead of silently overriding it.
+Explicitly flag proposals that contradict an existing ADR, identifying
+the ADR and explaining why the decision merits reconsideration.

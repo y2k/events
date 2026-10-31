@@ -1,4 +1,4 @@
-(ns telegram)
+(ns vendor.telegram)
 
 (def- api-base "https://api.telegram.org/bot")
 

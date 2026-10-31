@@ -4,7 +4,7 @@ SRC_DIRS := src test
 
 .PHONY: test
 test: build
-	@ cd $(BIN_DIR) && node --test test/main_test.js
+	@ cd $(BIN_DIR) && node --test test/main_test.js test/auto_publish_test.js
 
 .PHONY: build
 build:
@@ -25,3 +25,7 @@ run: build
 .PHONY: deploy
 deploy: test
 	@ cd $(WRANGLER_DIR) && wrangler deploy
+
+.PHONY: publish
+publish: build
+	@ node $(BIN_DIR)/src/publish.js

@@ -1,8 +1,8 @@
 (ns main
   (:require [effect :as fx])
   (:require [xml :as xml])
-  (:require [views :as views])
-  (:require [telegram :as tg]))
+  (:require [web.views :as views])
+  (:require [vendor.telegram :as tg]))
 
 (defn- parse-form-data [text]
   (let [params (URLSearchParams. text)]
